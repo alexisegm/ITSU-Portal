@@ -1,0 +1,22 @@
+/* ==========================================================================
+   DISEÑO DE COMPONENTES E IDENTIDAD VISUAL
+   ========================================================================== */
+
+/**
+ * Efecto de Borde de Neón Cian (Estilo ITSU)
+ * Aplica un sombreado externo sutil y un contorno translúcido.
+ */
+.neon-border {
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.15); /* Brillo cian suave al 15% */
+    border: 1px solid rgba(6, 182, 212, 0.3);     /* Contorno cian al 30% */
+    transition: all 0.3s ease;                     /* Transición suave de 300ms */
+}
+
+/**
+ * Estado Hover del Borde de Neón
+ * Se activa cuando el puntero del ratón se posiciona sobre el contenedor.
+ */
+.neon-border:hover {
+    box-shadow: 0 0 25px rgba(6, 182, 212, 0.35); /* Incrementa la fuerza del brillo */
+    border: 1px solid rgba(6, 182, 212, 0.6);     /* El contorno se vuelve más sólido (60%) */
+} 

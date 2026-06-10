@@ -1,0 +1,60 @@
+/* ==========================================================================
+   ESTRUCTURA DE DISEÑO Y PERSONALIZACIÓN DE SCROLLS
+   ========================================================================== */
+
+/**
+ * Grosor de la barra de desplazamiento vertical 
+ * exclusiva para la consola de monitoreo de Logs.
+ */
+#logs-container::-webkit-scrollbar {
+    width: 6px; /* Barra delgada y estética */
+}
+
+/* Fondo del riel del scroll */
+#logs-container::-webkit-scrollbar-track {
+    background: #020617; /* Fondo negro profundo (slate-950) */
+}
+
+/* La pieza móvil que el usuario arrastra */
+#logs-container::-webkit-scrollbar-thumb {
+    background: #1e293b; /* Color gris pizarra (slate-800) */
+    border-radius: 4px;  /* Bordes suavizados */
+}
+
+/* Cambia el color de la pieza móvil al pasar el ratón */
+#logs-container::-webkit-scrollbar-thumb:hover {
+    background: #06b6d4; /* Se enciende en color cian brillante */
+} 
+
+/* Animación del fondo */
+.animated-bg {
+    background: linear-gradient(-45deg, #030712, #0f172a, #0e7490, #030712);
+    background-size: 400% 400%;
+    animation: gradient-move 15s ease infinite;
+    min-height: 100vh;
+}
+
+@keyframes gradient-move {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+} 
+
+/* --- Reemplaza esto en tus estilos --- */
+.particle {
+    position: absolute;
+    /* AUMENTADO: Opacidad al 60% por defecto */
+    color: rgba(34, 211, 238, 0.6); 
+    font-size: 28px; /* AUMENTADO: Texto más grande */
+    font-weight: 900; /* NUEVO: Texto más grueso */
+    animation: float linear infinite;
+    /* NUEVO: Sombra para dar profundidad y contraste */
+    text-shadow: 0 0 8px rgba(34, 211, 238, 0.9), 0 0 15px rgba(34, 211, 238, 0.4);
+}
+
+@keyframes float {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    /* AUMENTADO: Opacidad al 100% en el punto máximo */
+    50% { opacity: 1; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+} 

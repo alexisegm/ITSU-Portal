@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Académico - ITSU</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="animated-bg text-slate-100 min-h-screen flex flex-col justify-between transition-colors duration-300"> 
+    <div id="particles-container"></div> 
+    <div id="header-container"></div>
+    
+    <div id="toast-container" class="fixed top-16 right-4 z-50 flex flex-col space-y-3 max-w-sm"></div>
+
+    <section id="login-screen" class="flex-grow flex items-center justify-center px-4 pt-28 pb-12">
+        <div id="login-card" class="bg-gray-900/80 backdrop-blur-md w-full max-w-md p-8 rounded-2xl border border-gray-800 shadow-2xl transition-colors duration-300">
+            
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center mb-4">
+                    <img src="img/Itsulogo.jpg" alt="Logo Circular ITSU" class="w-24 h-24 object-contain">
+                </div>
+
+                <div id="login-visual-panel" class="w-full mb-5 px-4">
+                    <div class="relative w-full aspect-[4/3] md:aspect-[16/10] rounded-xl overflow-hidden border border-gray-800/80 bg-gray-950/40 p-1 transition-all duration-300">
+                        <img src="img/imagen .svg" alt="Equipo ITSU" class="w-full h-full object-cover rounded-lg select-none pointer-events-none">
+                        <div id="login-visual-gradient" class="absolute inset-0 bg-gradient-to-t from-gray-950/40 via-transparent to-transparent pointer-events-none transition-colors duration-300"></div>
+                    </div>
+                </div>
+
+                <h1 id="login-title" class="text-2xl font-extrabold text-white">ITSU <span class="text-cyan-400">Portal</span></h1>
+                <p id="login-subtitle" class="text-xs text-gray-400 mt-1">Ingreso Privado Estudiantes y Administradores</p>
+            </div>
+
+            <div id="info-box" class="bg-gray-950/60 p-4 rounded-xl border border-gray-800 text-xs space-y-2 mb-5 transition-colors duration-300">
+                <p id="info-box-title" class="text-cyan-400 font-bold flex items-center gap-1">
+                    <i data-lucide="info" class="w-4 h-4"></i> Accesos Rápidos de Prueba (Tiempo Real):
+                </p>
+                <div id="info-box-text" class="space-y-1">
+                    <p><span>🎓 Ana Anselmi (Activa):</span> <code>ana.anselmi@itsu.education</code> / <b class="badge-key">123</b></p>
+                    <p><span>🎓 Alexis Gonzales (Activo):</span> <code>alexis.gonzales@itsu.education</code> / <b class="badge-key">123</b></p>
+                    <p><span>🎓 Yeneily Seijas (Egresada):</span> <code>yeneily.seijas@itsu.education</code> / <b class="badge-key">123</b></p>
+                    <p class="border-t border-gray-800/60 pt-1 mt-1"><span>🛠️ Administrador:</span> <code>admin@itsu.education</code> / <b class="badge-key">admin</b></p>
+                </div>
+            </div>
+
+            <form id="login-form" class="space-y-5">
+                <input type="email" id="login-email" required placeholder="usuario@itsu.education" class="w-full bg-gray-950 border border-gray-800 rounded-xl py-3 px-4 text-sm text-white focus:border-cyan-500 outline-none transition">
+                <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-gray-950 border border-gray-800 rounded-xl py-3 px-4 text-sm text-white focus:border-cyan-500 outline-none transition">
+                <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 font-bold py-3.5 rounded-xl text-gray-950 transition hover:opacity-90">Entrar al Sistema</button>
+            </form>
+        </div>
+    </section>
+
+    <div id="modal-container"></div> 
+
+    <script type="module" src="src/main.js"></script>
+</body>
+</html> 

@@ -1,0 +1,15 @@
+<div id="register-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div id="modal-card" class="bg-gray-900 w-full max-w-md p-6 rounded-2xl border border-gray-800 transition-colors duration-300">
+        <h3 id="modal-title" class="text-xl font-bold text-white mb-4">Nuevo Registro Estudiantil</h3>
+        <form id="register-student-form" class="space-y-4">
+            <input type="text" id="reg-name" required placeholder="Nombre Completo" class="w-full bg-gray-950 border border-gray-800 text-sm p-2.5 rounded-xl outline-none text-white transition-colors">
+            <input type="text" id="reg-id" required placeholder="Cédula" class="w-full bg-gray-950 border border-gray-800 text-sm p-2.5 rounded-xl outline-none text-white transition-colors">
+            <input type="email" id="reg-email" required placeholder="Correo Institucional" class="w-full bg-gray-950 border border-gray-800 text-sm p-2.5 rounded-xl outline-none text-white transition-colors">
+            <input type="text" id="reg-career" required placeholder="Carrera / Especialidad" class="w-full bg-gray-950 border border-gray-800 text-sm p-2.5 rounded-xl outline-none text-white transition-colors">
+            <div class="grid grid-cols-2 gap-4 pt-2">
+                <button type="button" id="btn-close-register" class="bg-gray-800 text-white p-2.5 rounded-xl text-sm">Cancelar</button>
+                <button type="submit" class="bg-cyan-500 text-gray-950 font-bold p-2.5 rounded-xl text-sm">Guardar en Mongo</button>
+            </div>
+        </form>
+    </div>
+</div> 

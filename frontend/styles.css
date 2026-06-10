@@ -1,0 +1,36 @@
+/* ==========================================================================
+   ARQUITECTURA DE ESTILOS DE LA INTERFAZ - PORTAL ITSU
+   Este archivo unifica los módulos de diseño usando importaciones nativas.
+   ========================================================================== */
+
+/* 1. Estilos base, fuentes tipográficas y reseteos globales */
+@import url('./css/base.css');
+
+/* 2. Componentes visuales y efectos estéticos específicos de la marca */
+@import url('./css/components.css');
+
+/* 3. Estructura de contenedores, cajas y barras de desplazamiento */
+@import url('./css/layout.css'); 
+
+/* Fondo que se adapta al tema */
+.animated-bg {
+    /* Fondo por defecto (modo oscuro) */
+    background: linear-gradient(-45deg, #030712, #0f172a, #0e7490, #030712);
+    background-size: 400% 400%;
+    animation: gradient-move 15s ease infinite;
+    min-height: 100vh;
+}
+
+/* Cuando la página está en modo claro */
+.light-mode-bg {
+    /* Degradado muy claro (de blanco a gris muy suave) */
+    background: linear-gradient(-45deg, #ffffff, #f8fafc, #e2e8f0, #ffffff);
+    background-size: 400% 400%;
+    animation: gradient-move 15s ease infinite;
+}
+
+@keyframes gradient-move {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+} 
