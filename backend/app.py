@@ -17,6 +17,13 @@ app.secret_key = "clave_secreta_itsu_2026"
 # Permite que el HTML/JS de tu compañera consuma esta API sin bloqueos de seguridad de red (CORS)
 CORS(app, supports_credentials=True)
 
+app.config.update(
+    SESSION_COOKIE_SAMESITE='None',
+    # Ponlo en False si estás probando localmente en HTTP sin certificado SSL.
+    # Cámbialo a True obligatoriamente al desplegar en producción con HTTPS (Render, AWS, Railway, etc.)
+    SESSION_COOKIE_SECURE=os.getenv('FLASK_ENV') == 'production' 
+)
+
 # CONFIGURACIÓN DE INFRAESTRUCTURA (REEMPLAZA CON TU URI DE ATLAS)
 # Nota: Añadimos '/itsu_portal' al final de la ruta para indicarle a Flask la BD exacta
 app.config["MONGO_URI"] = f"{os.getenv('MONGO_URI')}itsu_portal?retryWrites=true&w=majority"
