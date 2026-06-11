@@ -100,8 +100,164 @@ export const UI = {
 
     launchWorkspace() {
         const session = userSession.data;
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('app-workspace').classList.remove('hidden');
+        const loginScreen = document.getElementById('login-screen');
+        const workspace = document.getElementById('app-workspace');
+
+        if (!loginScreen || !workspace) return;
+
+        loginScreen.classList.add('hidden');
+        workspace.classList.remove('hidden');
         this.applyTheme(session.theme || 'dark');
+        console.log(`Transición exitosa. Rol detectado: ${session.role || 'Estudiante'}`);
+
+        // Redirección basada en el rol exacto de Flask
+        if (session.role === 'admin' || session.correo === 'admin@itsu.education') {
+            this.loadAdminDashboard();
+        } else {
+            this.loadStudentDashboard(session);
+        }
+    },
+
+    // NUEVA FUNCIÓN: Construye la tabla del boletín
+    async loadStudentDashboard(session) {
+        const workspace = document.getElementById('app-workspace');
+        
+        // 1. Inyectamos una estructura de carga visual (Skeleton loading)
+        workspace.innerHTML = `
+            <div class="flex flex-col items-center justify-center mt-20">
+                <i data-lucide="loader-2" class="w-10 h-10 animate-spin text-cyan-500 mb-4"></i>
+                <h2 class="text-xl text-gray-300">Cargando tu boletín académico...</h2>
+            </div>
+        `;
+        if (window.lucide) window.lucide.createIcons();
+
+        // ==========================================
+        // MODO DEBUG: Verificando la respuesta de Flask
+        // ==========================================
+        console.warn("==== DATOS DE SESIÓN DESDE FLASK ====");
+        console.log(session);
+        
+        try {
+            // Ampliamos la búsqueda.
+            // Dependiendo de cómo lo programaste en Python, 
+            // los datos podrían estar en la raíz o dentro de un objeto 'user'.
+            const usuario = session.user ? session.user : session;
+            
+            // Buscamos cédula, correo o el _id de MongoDB
+            const identificador = usuario.cedula || usuario.correo || usuario._id || usuario.id; 
+            
+            console.log("Identificador final enviado a la API:", identificador);
+            // ==========================================
+
+            if (!identificador) {
+                throw new Error("No se encontró la cédula o correo en la sesión. Revisa la consola.");
+            }
+
+            const boletinData = await StudentAPI.getBoletines(identificador);
+
+            // 3. Renderizamos la interfaz (Plantilla dinmica que respeta tu Tailwind)
+            workspace.innerHTML = `
+                <div class="max-w-6xl mx-auto w-full px-4 pt-10">
+                    <div class="flex justify-between items-end mb-6 border-b border-gray-700/50 pb-4">
+                        <div>
+                            <h2 class="text-3xl font-extrabold text-white">Mi Boletn</h2>
+                            <p class="text-gray-400 mt-1">Estudiante: <span class="text-cyan-400">${session.nombre || session.correo}</span></p>
+                        </div>
+                        <button id="btn-download-pdf" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 border border-gray-600 transition">
+                            <i data-lucide="download" class="w-4 h-4"></i> Descargar PDF
+                        </button>
+                    </div>
+
+                    <div class="bg-gray-900/60 border border-gray-800 rounded-xl overflow-hidden shadow-xl p-6">
+                        <pre class="text-sm text-green-400 overflow-x-auto">${JSON.stringify(boletinData, null, 2)}</pre>
+                    </div>
+                </div>
+            `;
+            if (window.lucide) window.lucide.createIcons();
+
+        } catch (err) {
+            workspace.innerHTML = `
+                <div class="text-center mt-20">
+                    <i data-lucide="alert-triangle" class="w-12 h-12 text-red-500 mx-auto mb-4"></i>
+                    <h2 class="text-xl text-white">Error al cargar datos</h2>
+                    <p class="text-gray-400">${err.message}</p>
+                </div>
+            `;
+            if (window.lucide) window.lucide.createIcons();
+        }
+    },
+
+    async loadAdminDashboard() {
+        const workspace = document.getElementById('app-workspace');
+        workspace.innerHTML = `
+            <div class="flex flex-col items-center justify-center mt-20">
+                <i data-lucide="loader-2" class="w-10 h-10 animate-spin text-cyan-500 mb-4"></i>
+                <h2 class="text-xl text-gray-300">Cargando Panel de Administrador...</h2>
+            </div>
+        `;
+        if (window.lucide) window.lucide.createIcons();
+
+        try {
+            // Consultamos la lista de alumnos reales de MongoDB
+            const estudiantes = await AdminAPI.getEstudiantes();
+            let tableRows = '';
+            estudiantes.forEach(est => {
+                tableRows += `
+                    <tr class="border-b border-gray-800 hover:bg-gray-800/30 transition">
+                        <td class="px-6 py-4 text-sm text-white font-medium">${est.nombre || 'N/A'}</td>
+                        <td class="px-6 py-4 text-sm text-cyan-400 font-mono">${est.cedula || 'N/A'}</td>
+                        <td class="px-6 py-4 text-sm text-gray-400">${est.correo || 'N/A'}</td>
+                        <td class="px-6 py-4 text-sm">
+                            <span class="px-2 py-1 text-xs rounded-full ${est.estado === 'Activo' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">
+                                ${est.estado || 'Activo'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            workspace.innerHTML = `
+                <div class="max-w-6xl mx-auto w-full px-4 pt-10">
+                    <div class="flex justify-between items-center mb-6 border-b border-gray-700/50 pb-4">
+                        <div>
+                            <h2 class="text-3xl font-extrabold text-white">Panel de Administración</h2>
+                            <p class="text-gray-400 mt-1">Control de Estudiantes e Historial Académico</p>
+                        </div>
+                        <button id="btn-open-register" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-90 text-gray-950 font-bold px-4 py-2 rounded-xl flex items-center gap-2 transition">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i> Registrar Estudiante
+                        </button>
+                    </div>
+
+                    <div id="admin-table-card" class="bg-gray-900/60 border border-gray-800 rounded-xl overflow-hidden shadow-xl mb-8">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-950/80 border-b border-gray-800">
+                                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Nombre</th>
+                                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Cédula</th>
+                                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Correo</th>
+                                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tableRows || '<tr><td colspan="4" class="text-center py-6 text-gray-500">No hay estudiantes en la base de datos.</td></tr>'}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            if (window.lucide) window.lucide.createIcons();
+
+        } catch (err) {
+            workspace.innerHTML = `
+                <div class="text-center mt-20">
+                    <i data-lucide="alert-triangle" class="w-12 h-12 text-red-500 mx-auto mb-4"></i>
+                    <h2 class="text-xl text-white">Error al cargar el panel de administración</h2>
+                    <p class="text-gray-400">${err.message}</p>
+                </div>
+            `;
+            if (window.lucide) window.lucide.createIcons();
+        }
     }
-}; 
+};

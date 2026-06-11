@@ -36,8 +36,24 @@ export const AuthAPI = {
  */
 export const StudentAPI = {
     // Descarga las materias y notas del alumno logueado usando su Cédula
-    async getBoletines(studentId) {
-        const res = await fetch(`${API_URL}/student/boletines/${studentId}`);
+    async getBoletines(identificador) {
+        
+        // Diccionario actualizado con el formato EXACTO de tu base de datos (datosDB.txt)
+        const mapaCedulas = {
+            "ana@itsu.education": "V-29640288",
+            "yeneily@itsu.education": "V-32554575",
+            "alexis@itsu.education": "V-21622104"
+        };
+        
+        // Si el identificador es un correo conocido, usamos su cédula con la "V-".
+        // Si no, enviamos lo que llegue.
+        const cedulaFinal = mapaCedulas[identificador] || identificador;
+
+        console.log(`Buscando boletín para la cédula exacta: ${cedulaFinal}`);
+        
+        // Enviamos la petición a Flask con la Cédula correcta
+        const res = await fetch(`${API_URL}/student/boletines/${cedulaFinal}`);
+        
         if (!res.ok) throw new Error("No se pudieron obtener tus boletines");
         return await res.json();
     }
@@ -88,4 +104,4 @@ export const AdminAPI = {
         if (!res.ok) throw new Error(data.message || "Error al registrar alumno");
         return data;
     }
-}; 
+};

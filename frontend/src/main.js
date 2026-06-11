@@ -24,6 +24,11 @@ async function onLoginSubmit(e) {
     const contrasena = document.getElementById('login-password').value;
     try {
         const data = await AuthAPI.login(correo, contrasena);
+        // NUEVO: Como Flask solo devuelve {success: true, role: "..."}, 
+        // inyectamos manualmente el correo capturado del formulario
+        // para que la SPA sepa a quién le pertenecen los boletines.
+        data.correo = correo; 
+        
         userSession.setSession(data);
         UI.showToast("Acceso correcto", "success");
         UI.launchWorkspace();
@@ -91,4 +96,4 @@ import { ParticleSystem } from './particles.js';
 document.addEventListener('DOMContentLoaded', () => {
     ParticleSystem.init();
     // ... tus otras funciones de inicio (como la del tema o login)
-}); 
+});
