@@ -1,5 +1,5 @@
-// La dirección IP local donde el servidor Flask de tu compañero se queda escuchando peticiones
-export const API_URL = "http://localhost:5000/api";
+// Usamos la misma URL de origen donde se carga la página para evitar problemas de host/origen
+export const API_URL = `${window.location.protocol}//${window.location.host}/api`;
 
 /**
  * Objeto de estado global para la sesión del usuario.

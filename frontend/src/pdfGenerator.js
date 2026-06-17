@@ -8,8 +8,9 @@ import { StudentAPI } from './api.js';
 export async function generatePDF(trimestreKey) {
     try {
         // Buscamos las calificaciones actualizadas del alumno
-        const bulletins = await StudentAPI.getBoletines(userSession.data.id);
-        const trim = bulletins[trimestreKey];
+        const estudiante = await StudentAPI.getBoletines();
+        const bulletins = estudiante && estudiante.bulletins ? estudiante.bulletins : {};
+        const trim = bulletins[trimestreKey] || { grades: {} };
 
         const { jsPDF } = window.jspdf; // Desestructuramos la librería cargada en el HTML
         const doc = new jsPDF(); // Inicializamos un lienzo PDF en blanco
@@ -24,9 +25,13 @@ export async function generatePDF(trimestreKey) {
         // --- METADATOS DEL ESTUDIANTE ---
         doc.setTextColor(50, 50, 50); // Color gris oscuro para texto del cuerpo
         doc.setFontSize(11);
-        doc.text(`Estudiante: ${userSession.data.name}`, 15, 45);
-        doc.text(`Cédula: ${userSession.data.id}`, 15, 52);
-        doc.text(`Carrera: ${userSession.data.career}`, 15, 59);
+        const nombre = (userSession.data && (userSession.data.nombre || userSession.data.name || userSession.data.correo)) || 'Estudiante';
+        const cedula = (userSession.data && (userSession.data.cedula || userSession.data.id)) || (estudiante && estudiante.cedula) || 'N/A';
+        const carrera = (userSession.data && (userSession.data.carrera || userSession.data.career)) || (estudiante && estudiante.carrera) || 'N/D';
+
+        doc.text(`Estudiante: ${nombre}`, 15, 45);
+        doc.text(`Cédula: ${cedula}`, 15, 52);
+        doc.text(`Carrera: ${carrera}`, 15, 59);
         doc.text(`Periodo: ${trimestreKey.toUpperCase()}`, 15, 66);
 
         // --- TABLA DE MATERIAS Y NOTAS ---
@@ -37,7 +42,7 @@ export async function generatePDF(trimestreKey) {
         y += 10;
 
         // Recorremos las materias dinámicas que vengan desde MongoDB
-        Object.keys(trim.grades).forEach(materia => {
+        Object.keys(trim.grades || {}).forEach(materia => {
             doc.text(materia, 15, y);
             doc.text(`${trim.grades[materia]} Ptos`, 150, y);
             y += 10; // Bajamos el cursor para la siguiente fila

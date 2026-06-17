@@ -1,6 +1,7 @@
 import { userSession } from './config.js';
 import { AuthAPI, AdminAPI } from './api.js';
 import { UI } from './ui.js';
+import { ParticleSystem } from './particles.js';
 
 // ==========================================
 // FUNCIÓN INYECTORA
@@ -70,6 +71,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 2. Inicializar iconos una vez cargado el HTML (necesario para los iconos que inyectamos)
     if (window.lucide) window.lucide.createIcons();
 
+    // 3. Iniciar sistema de partículas (ligero)
+    try { ParticleSystem.init(); } catch (e) { console.warn('ParticleSystem init failed', e); }
+
     // 3. Delegación de eventos en el body: captura TODO sin importar cuándo se cargó el elemento
     document.body.addEventListener('submit', (e) => {
         if (e.target.id === 'login-form') onLoginSubmit(e);
@@ -89,11 +93,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
-// Añade esto al principio de tu main.js
-import { ParticleSystem } from './particles.js';
-
-// Añade esto donde inicializas tus otras funciones
-document.addEventListener('DOMContentLoaded', () => {
-    ParticleSystem.init();
-    // ... tus otras funciones de inicio (como la del tema o login)
-});
+// ParticleSystem import moved to the top and init called in the main DOMContentLoaded

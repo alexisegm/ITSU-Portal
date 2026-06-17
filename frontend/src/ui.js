@@ -155,24 +155,70 @@ export const UI = {
 
             const boletinData = await StudentAPI.getBoletines(identificador);
 
-            // 3. Renderizamos la interfaz (Plantilla dinmica que respeta tu Tailwind)
+            // 3. Renderizamos la interfaz (Plantilla dinámica que respeta tu Tailwind)
+            const estudiante = boletinData;
+            const bulletins = estudiante && estudiante.bulletins ? estudiante.bulletins : {};
+
+            let trimestersHtml = '';
+            Object.keys(bulletins).forEach(key => {
+                const t = bulletins[key];
+                const grades = t.grades || {};
+                let gradesRows = '';
+                Object.keys(grades).forEach(materia => {
+                    gradesRows += `<tr class="border-b border-gray-800"><td class="px-4 py-2 text-sm text-gray-200">${materia}</td><td class="px-4 py-2 text-sm text-cyan-300">${grades[materia]}</td></tr>`;
+                });
+
+                trimestersHtml += `
+                    <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4 shadow-sm">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-lg font-bold text-white">${key.toUpperCase()}</h3>
+                            <div class="text-sm">
+                                <span class="px-2 py-1 rounded-full ${t.available ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-300 border border-amber-500/20'}">${t.available ? 'Disponible' : 'No disponible'}</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-3">Promedio: <span class="text-cyan-300">${t.promedio || 0}</span></p>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-950/80 border-b border-gray-800">
+                                        <th class="px-4 py-2 text-xs font-bold text-gray-400">Materia</th>
+                                        <th class="px-4 py-2 text-xs font-bold text-gray-400">Nota</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${gradesRows || '<tr><td colspan="2" class="px-4 py-6 text-gray-500 text-center">No hay calificaciones registradas.</td></tr>'}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            });
+
             workspace.innerHTML = `
                 <div class="max-w-6xl mx-auto w-full px-4 pt-10">
                     <div class="flex justify-between items-end mb-6 border-b border-gray-700/50 pb-4">
                         <div>
-                            <h2 class="text-3xl font-extrabold text-white">Mi Boletn</h2>
-                            <p class="text-gray-400 mt-1">Estudiante: <span class="text-cyan-400">${session.nombre || session.correo}</span></p>
+                            <h2 class="text-3xl font-extrabold text-white">Mi Boletín</h2>
+                            <p class="text-gray-400 mt-1">Estudiante: <span class="text-cyan-400">${estudiante.nombre || estudiante.correo}</span></p>
                         </div>
-                        <button id="btn-download-pdf" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 border border-gray-600 transition">
-                            <i data-lucide="download" class="w-4 h-4"></i> Descargar PDF
-                        </button>
+                        <div class="flex items-center gap-3">
+                            <button id="btn-download-pdf" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 border border-gray-600 transition">
+                                <i data-lucide="download" class="w-4 h-4"></i> Descargar PDF
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="bg-gray-900/60 border border-gray-800 rounded-xl overflow-hidden shadow-xl p-6">
-                        <pre class="text-sm text-green-400 overflow-x-auto">${JSON.stringify(boletinData, null, 2)}</pre>
+                    <div class="grid gap-4">
+                        ${trimestersHtml}
                     </div>
                 </div>
             `;
+
+            // Evento para descargar PDF (descarga el primer trimestre disponible por defecto)
+            document.getElementById('btn-download-pdf')?.addEventListener('click', () => {
+                const first = Object.keys(bulletins)[0];
+                if (first) generatePDF(first);
+            });
             if (window.lucide) window.lucide.createIcons();
 
         } catch (err) {
